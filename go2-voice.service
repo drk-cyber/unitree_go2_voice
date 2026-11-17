@@ -1,0 +1,27 @@
+[Unit]
+Description=Go2 offline voice control
+Wants=network-online.target
+After=network-online.target sound.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=unitree
+Group=unitree
+SupplementaryGroups=audio
+WorkingDirectory=/home/unitree/go2_voice
+Environment=HOME=/home/unitree
+Environment=PYTHONUNBUFFERED=1
+ExecStartPre=/usr/bin/test -d /proc/asound/Device
+ExecStart=/usr/bin/python3 -u /home/unitree/go2_voice/voice_control_board.py --hands-free --volume 10 --mic-device plughw:CARD=Device,DEV=0
+Restart=on-failure
+RestartSec=90
+SuccessExitStatus=130 143
+TimeoutStopSec=20
+KillMode=mixed
+StandardInput=null
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

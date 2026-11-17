@@ -1,0 +1,57 @@
+# Ignore Python bytecode
+__pycache__/
+*.py[cod]
+# Logs and runtime files
+log/
+
+# Ignore the re/ directory
+re/
+
+# Ignore egg-info directories
+*.egg-info/
+
+# Ignore OS specific files
+.DS_Store
+Thumbs.db
+
+# Ignore virtual environments (if applicable)
+venv/
+env/
+
+# Ignore IDE specific files (optional, if you're using an IDE like PyCharm, VS Code, etc.)
+.idea/
+.vscode/
+
+output.wav
+output_video.mp4
+
+build/
+dist/
+
+# Local-only experiments / connection sanity scripts
+test/
+tests/
+
+# Local editor state and generated voice recordings/cache
+.mimosa/
+/logs/
+/*.wav
+/tts_cache_*
+/tts_test.mp3
+
+# Models and offline installers are distributed separately
+/models/
+/wheels/
+*.onnx
+*.whl
+*.tar.bz2
+
+# Local credentials (an example template may be shared)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Upstream PyPI release workflow is not used by this voice application
+/.github/workflows/publish.yml
