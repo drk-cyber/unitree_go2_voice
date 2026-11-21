@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Go2 对话台 · 医疗废物回收项目</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="workspace">
+    <header class="masthead">
+      <div class="identity">
+        <span class="mark" aria-hidden="true">G<span>2</span></span>
+        <div><div class="brand">Go2 对话台</div><div class="project">医疗废物回收项目</div></div>
+      </div>
+      <div class="connection" id="connection" data-state="connecting" role="status">
+        <span class="dot" aria-hidden="true"></span><span id="status">正在加载</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="context" aria-label="对话来源">
+        <div class="source-card">
+          <span class="eyebrow">语音来源</span>
+          <h2 id="source-title">Go2 EDU</h2>
+          <div class="wave" aria-hidden="true"></div>
+          <p id="source-note">板载 USB 麦克风收音，电脑显示对话。</p>
+          <dl class="source-details">
+            <div><dt>当前模式</dt><dd id="mode">正在加载</dd></div>
+            <div><dt>显示范围</dt><dd>本次会话</dd></div>
+          </dl>
+        </div>
+        <div class="hint">
+          <h2 id="hint-title">怎么开始</h2>
+          <p id="hint-text">对着狗身上的麦克风说“小狗，打招呼”。</p>
+        </div>
+      </aside>
+
+      <main class="transcript" aria-labelledby="conversation-title">
+        <div class="sheet-head">
+          <div><div class="eyebrow">VOICE TRANSCRIPT</div><h1 id="conversation-title">语音对话</h1></div>
+          <button id="replay" type="button" hidden>重播演示</button>
+        </div>
+        <div class="sheet-content">
+          <div class="empty" id="empty">
+            <span class="empty-symbol" aria-hidden="true">···</span>
+            <h2 id="empty-title">等待对话</h2>
+            <p id="empty-text">识别文字和机器狗的回复会出现在这里。</p>
+          </div>
+          <ol id="messages" class="messages" aria-label="对话消息" aria-live="polite" aria-relevant="additions"></ol>
+        </div>
+        <footer class="sheet-foot"><span id="detail">正在读取页面状态。</span><span id="count">0 条消息</span></footer>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -61,6 +61,22 @@ class WakeTests(unittest.TestCase):
         self.assertEqual(gate.accept("旺财右转", 1)[0], "command")
         self.assertEqual(self.mod.WakeGate("【小狗】").accept("小狗，比心", 1)[0], "command")
 
+    def test_collection_reply_requires_a_complete_command(self):
+        gate = self.mod.WakeGate("小狗")
+        reply = ("reply", "好的，我去执行任务")
+        self.assertEqual(gate.accept("回收医疗废物", 1), ("ignore", None))
+        self.assertEqual(gate.accept("小狗，不要回收医疗废物。", 2), ("unknown", None))
+        self.assertEqual(gate.accept("小狗，请回收医疗废物。", 3), ("command", reply))
+        self.assertEqual(gate.accept("小狗", 4), ("wake", None))
+        self.assertEqual(gate.accept("收集医疗垃圾", 5), ("command", reply))
+        self.assertEqual(gate.accept("回收医疗费物", 6), ("ignore", None))
+        self.assertEqual(gate.accept("小狗，不要回收医疗费物。", 7), ("unknown", None))
+        self.assertEqual(gate.accept("小狗。", 8), ("wake", None))
+        self.assertEqual(gate.accept("请回收医疗费物。", 14), ("command", reply))
+        self.assertEqual(self.mod.match_command("请回收医疗废物。"), reply)
+        self.assertEqual(self.mod.match_command("请回收医疗费物。"), reply)
+        self.assertIsNone(self.mod.match_command("不要回收医疗废物。"))
+
 
 class SegmentTests(unittest.TestCase):
     @classmethod
@@ -281,6 +297,24 @@ class MicrophoneTests(unittest.IsolatedAsyncioTestCase):
         action = pub.publish_request_new.await_args.args[1]["api_id"]
         self.assertEqual(action, self.mod.SPORT_CMD["FingerHeart"])
         spoken.assert_awaited_once_with(conn, "给你比个心")
+
+    async def test_collection_command_replies_without_sending_motion(self):
+        pub = SimpleNamespace(publish_request_new=AsyncMock(return_value={
+            "data": {"data": '{"name":"normal"}'}}), publish_without_callback=Mock())
+        conn = SimpleNamespace(datachannel=SimpleNamespace(pub_sub=pub), pc=SimpleNamespace(addTrack=Mock()))
+        spoken = AsyncMock()
+
+        async def listen(device, word, threshold, on_event):
+            command = self.mod.WakeGate(word).accept("小狗，请回收医疗废物。", 1)
+            self.assertTrue(await on_event(*command))
+
+        with patch.object(self.mod, "listen_hands_free", listen), patch.object(self.mod, "dog_say", spoken):
+            await self.mod.run_control(conn, hands_free=True)
+
+        spoken.assert_awaited_once_with(conn, "好的，我去执行任务")
+        self.assertEqual([call.args[0] for call in pub.publish_request_new.await_args_list],
+                         [self.mod.RTC_TOPIC["MOTION_SWITCHER"], self.mod.RTC_TOPIC["VUI"]])
+        pub.publish_without_callback.assert_not_called()
 
 
 if __name__ == "__main__":

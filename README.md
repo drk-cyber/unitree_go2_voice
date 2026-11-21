@@ -11,6 +11,8 @@
 - 手动回车录音和免回车连续听取两种模式。
 - 默认唤醒词“小狗”，支持“小狗，打招呼”，或先唤醒、等回应后再说指令。
 - 停止、站立、趴下、前进、后退、左右转、跳舞、打招呼、比心等命令映射。
+- 医疗废物回收演示口令支持“废物”和误识别的同音字“费物”，匹配后播报“好的，我去执行任务”。该口令只触发播报。
+- 电脑对话台通过 SSH 读取语音服务日志，显示识别文字和播报台词，也可以离线预览模拟对话。
 - SenseVoice 本地识别、MeloTTS 本地合成，使用 sherpa-onnx 推理。
 - USB 麦克风按 ALSA 名称选择，启动时测量背景音，按声音停顿切分语句。
 - 常驻 WebRTC 音频轨道、播报期间暂停听取、移动结束/取消时归零、退出回收录音进程。
@@ -28,6 +30,7 @@
 | [voice_control_board.py](voice_control_board.py) | 当前板载主入口，先连接验证，再导入语音模块 |
 | [voice_control_board_runtime.py](voice_control_board_runtime.py) | 录音、识别、唤醒、指令、动作与语音播报的核心逻辑 |
 | [BOARD_V8.md](BOARD_V8.md) | 免回车、麦克风、唤醒与音量使用说明 |
+| [go2_voice_frontend/README.md](go2_voice_frontend/README.md) | Windows 电脑对话台的启动与实机连接方法 |
 | [go2-voice.service](go2-voice.service) | 后台服务配置 |
 | [install_voice_service.py](install_voice_service.py) | 服务安装前检查与安装器 |
 | [BOARD_SERVICE.md](BOARD_SERVICE.md) | 后台运行、日志与开机自启管理 |

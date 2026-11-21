@@ -28,8 +28,11 @@ SENSE_DIR = os.path.join(MODELS, "sensevoice")   # 里面要有 model.int8.onnx 
 TTS_DIR = os.path.join(MODELS, "melo_tts")       # model.onnx + lexicon.txt + tokens.txt + dict/
 REC_WAV = "/home/unitree/go2_voice/last_utt.wav"
 
-# ---------- 命令表 (与PC版一致) ----------
+# ---------- 命令表：reply 类型只播报 ----------
 COMMANDS = [
+    (["回收医疗废物", "收集医疗废物", "去回收医疗废物", "回收医疗垃圾", "收集医疗垃圾",
+      "去回收医疗垃圾", "开始回收任务", "执行回收任务",
+      "回收医疗费物", "收集医疗费物", "去回收医疗费物"], "reply", "好的，我去执行任务"),
     (["停", "停下", "停止", "别动", "不要动", "站住"], "stop", None),
     (["站起来", "站立", "起身", "起立", "站起來", "粘起来", "沾起来", "粘起來"], "action", ("StandUp", "好的，我起来了")),
     (["趴下", "卧倒", "臥倒"], "action", ("StandDown", "我趴下休息啦")),
@@ -180,8 +183,12 @@ def match_command(text):
     t = text.replace(" ", "")
     if not t:
         return None
+    # 回车模式的回收口令也要求整句匹配，不在普通对话里找子串。
+    exact = exact_voice_command(t)
+    if exact and exact[0] == "reply":
+        return exact
     for keys, ctype, arg in COMMANDS:
-        if any(k in t for k in keys):
+        if ctype != "reply" and any(k in t for k in keys):
             return ctype, arg
     return None
 
@@ -709,7 +716,9 @@ async def run_control(conn, volume=DOG_VOLUME, hands_free=False, wake_word="小�
     async def execute(command, wait_for_speech=False):
         global _walk_task
         ctype, arg = command
-        if ctype == "stop":
+        if ctype == "reply":
+            line = arg
+        elif ctype == "stop":
             await stop_walk()
             pub.publish_without_callback(
                 RTC_TOPIC["WIRELESS_CONTROLLER"],
